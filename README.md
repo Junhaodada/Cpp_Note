@@ -4,6 +4,8 @@
 
 ## 书籍
 
+《C++新经典》
+
 《C++ Primer》
 
 《**Effective C++**》、《**More Effective C++**》、《**STL** 源码剖析》、《深度探索 **C++** 对象模型》
