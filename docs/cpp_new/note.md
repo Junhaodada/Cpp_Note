@@ -439,7 +439,7 @@ new和delete创建和销毁对象的方式，必须配对使用
 父类与子类出现同名成员函数的情况
 1. 子类重载父类成员函数
 2. 在子类中使用using声明，引入父类所有的成员函数
-  
+
 
 ```cpp
   // Human
@@ -457,7 +457,7 @@ new和delete创建和销毁对象的方式，必须配对使用
   men.samenamefunc();
   men.samenamefunc(10); 
   men.Human::samenamefunc();
-  ```
+```
 
 ### 14.8　父类指针、虚/纯虚函数、多态性与析构函数
 
@@ -546,7 +546,7 @@ phuman3->eat();
 （1）抽象类不是必须用，不用当然也可以。
 （2）抽象类中的虚函数不写函数体，而是推迟到子类中去写。抽象类（父类）就可以“偷懒”少写点代码。
 （3）抽象类主要是用来做父类，把一些公共接口写成纯虚函数，这些纯虚函数就相当于一些规范，所有继承的子类都要实现这些规范（重写这些纯虚函数）。
- 
+
 
 #### 虚析构函数
 
@@ -853,4 +853,179 @@ Human &operator=(const Human &h) {
 
 ### 14.13　临时对象深入探讨、解析与提高性能手段
 
+## 第15章 模板与泛型
 
+### 15.1　模板概念与函数模板的定义、调用
+
+模板、泛型编程
+
+模板类型
+
+- 函数模板
+
+- 类模板
+
+简单的认识：
+
+- 泛型编程是以独立于任何特定类型的方式编写代码。使用泛型编程时，需要提供具体程序实例所操作的类型或者值。
+- 模板是泛型编程的基础。模板是创建类或者函数的蓝图或者公式。通过给这些蓝图或者公式提供足够的信息，让这些蓝图或公式真正地转变为具体的类或者函数，这种转变发生在编译时。
+- 模板支持将类型作为参数的程序设计方式，从而实现了对泛型程序设计的直接支持。也就是说，C++模板机制允许在定义类、函数时将类型作为参数。
+
+```c++
+T funcadd(T i1, T i2) {
+  T addhe = i1 + i2;
+  return addhe;
+}
+funcadd(1, 2);
+```
+
+
+
+模板参数是推断出来的
+
+非类型模版参数：
+
+```c++
+#include <cstdio>
+#include <iostream>
+using namespace std;
+template <typename T>
+T funcadd(T i1, T i2) {
+  T addhe = i1 + i2;
+  return addhe;
+}
+
+template <int a, int b>
+int funcadd2() {
+  int addhe = a + b;
+  return addhe;
+}
+template <typename T, int a, int b>
+int funcadd3(T c) {
+  int addhe = (int)c + a + b;
+  return addhe;
+}
+void test1() {
+  cout << funcadd(1, 2) << endl;
+  cout << funcadd2<1, 2>() << endl;
+  int a = 1;
+  //   cout << funcadd2<a, 2>() << endl; //报错 非类型模版参数必须是常量表达式
+
+  cout << funcadd3<double, 1, 2>(1)
+       << endl;  // 传参以T为准，编译器模版参数类型推断
+}
+int main() {
+  cout << "hello world" << endl;
+  test1();
+  return 0;
+}
+
+```
+
+非类型模板参数必须是一个常量表达式，否则编译会出错。
+
+函数模板的定义并不会导致编译器生成相关代码，只有调用这个函数模板时，编译器才会实例化一个特定版本的函数并生成函数相关代码。
+
+编译器生成代码的时候，需要能够找到函数模板的函数体部分，所以函数模板的定义通常都是在.h头文件中。
+
+<img src="../img/CB_3300020817_Figure-P409_61618.jpg" alt="img" style="zoom:50%;" />
+
+
+
+### 15.2　类模板概念与类模板的定义、使用
+
+类模版的引入
+
+编译器不能为类模板推断模板参数。所以，为了使用类模板，`必须`在模板名后面用尖括号“＜＞”提供额外信息，这些信息其实就是对应着模板参数列表里的参数。
+
+类模版实现：
+
+- 成员函数
+- 运算符重载
+
+```c++
+#include <cstdio>
+#include <iostream>
+#include <vector>
+using namespace std;
+template <typename T>
+class myvector {
+ public:
+  typedef T* myiterator;
+
+ public:
+  myvector();
+  myvector& operator&=(const myvector&);
+
+ public:
+  myiterator mybegin();
+  myiterator myend();
+
+  // 类模版成员函数定义
+  void myfunc0() {}
+  // 类模版成员函数声明
+  void myfunc();
+};
+
+// 类模版成员函数实现
+template <typename T>
+void myvector<T>::myfunc() {}
+
+template <typename T>
+myvector<T>& myvector<T>::operator&=()&=(const myvector<T>&) {}
+
+int main() {
+  myvector<int> tmpvec1;
+  myvector<double> tmpvec2;
+  return 0;
+}
+```
+
+
+
+## 第16章 智能指针
+
+`智能指针`的引入正是为了防止无意之间写出有内存泄漏的程序。内存释放的工作将交给智能指针来完成，在很大程度上能够避免程序代码中的内存泄漏。
+
+### 16.1 直接内存管理（new/delete）、创建新工程与观察内存泄漏
+
+**直接内存管理**
+
+- new出来的内存千万不要忘记delete，否则内存泄漏，泄漏的内存累积到一定程度，程序会因为内存耗尽而崩溃，而且这种错误不到程序崩溃时发现不了，例如有的程序连续运行数天甚至数十天才崩溃，所以这种错误非常难以发现。
+- delete后的内存不能再使用，否则编译不报错，但执行报告异常
+- 内存被释放后千万不可以再对其读或者写，且同一块内存千万不可释放两次
+
+### 16.2 new/delete探秘、智能指针总述与shared_ptr基础
+
+**new/delete总结**
+
+- 1.new/delete是什么
+- 2.operator new（）和operator delete（）
+- 3.new如何记录分配的内存大小供delete使用
+- 3.new如何记录分配的内存大小供delete使用
+- 4.申请和释放一个数组
+- 5.为什么new/delete、new[]/delete[]要配对使用
+
+**智能指针总述**
+
+C++标准库中有4种智能指针，即std::auto_ptr、std::unique_ptr、std::shared_ptr、std::weak_ptr。
+
+- shared_ptr是共享式指针的概念。多个指针指向同一个对象，最后一个指针被销毁时，这个对象就会被释放。
+- weak_ptr这个智能指针是用来辅助shared_ptr工作的，后面都会详细介绍。
+- unique_ptr是一种独占式指针的概念，同一个时间内只有一个指针能够指向该对象，当然，该对象的拥有权（所有权）是可以移交出去的。
+- 作为智能指针，程序员不用再担心内存的释放问题，即便忘记了delete，系统也能够帮助程序员delete，这是智能指针的本职工作。
+
+**shared_ptr基础**
+
+shared_ptr指针采用的是共享所有权来管理所指向对象的生存期。
+
+shared_ptr的工作机制是使用引用计数，每一个shared_ptr指向相同的对象（内存）。
+
+shared_ptr初始化：
+
+- 常规初始化
+- make_shared函数
+
+
+
+对象复制、引用传参都会使计数增加

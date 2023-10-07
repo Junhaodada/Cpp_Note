@@ -1,0 +1,7 @@
+[
+{
+  "directory": "F:/A-Working/project/Cpp_Note/googletest_demo/build",
+  "command": "E:\\Tool\\mingw64\\bin\\g++.exe  @CMakeFiles/test_demo.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\test_demo.dir\\main.cpp.obj -c F:\\A-Working\\project\\Cpp_Note\\googletest_demo\\main.cpp",
+  "file": "F:/A-Working/project/Cpp_Note/googletest_demo/main.cpp"
+}
+]
