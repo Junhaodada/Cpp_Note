@@ -1,5 +1,10 @@
 {
     "files.associations": {
-        "new": "cpp"
+        "ostream": "cpp",
+        "iostream": "cpp",
+        "memory": "cpp",
+        "vector": "cpp",
+        "thread": "cpp",
+        "string": "cpp"
     }
 }
